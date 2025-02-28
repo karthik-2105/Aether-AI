@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AtherAI - Interactive Code Learning Platform</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tailwindcss/2.2.19/tailwind.min.js"></script>
+    <style>
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+            100% { transform: translateY(0px); }
+        }
+        
+        .cursor-glow {
+            background: radial-gradient(circle at var(--x, 50%) var(--y, 50%), 
+                                      rgba(129, 140, 248, 0.2) 0%,
+                                      transparent 50%);
+        }
+        
+        .hero-gradient {
+            background: linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%);
+        }
+        
+        .floating-element {
+            animation: float 6s ease-in-out infinite;
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+    <script type="text/babel">
+        const App = () => {
+            const [isMenuOpen, setIsMenuOpen] = React.useState(false);
+            const [cursorPosition, setCursorPosition] = React.useState({ x: 0, y: 0 });
+            const [isLoggedIn, setIsLoggedIn] = React.useState(false);
+            
+            React.useEffect(() => {
+                const handleMouseMove = (e) => {
+                    const x = (e.clientX / window.innerWidth) * 100;
+                    const y = (e.clientY / window.innerHeight) * 100;
+                    document.documentElement.style.setProperty('--x', `${x}%`);
+                    document.documentElement.style.setProperty('--y', `${y}%`);
+                };
+                
+                window.addEventListener('mousemove', handleMouseMove);
+                return () => window.removeEventListener('mousemove', handleMouseMove);
+            }, []);
+
+            // Navigation Component
+            const Navigation = () => (
+                <nav className="fixed w-full bg-white shadow-md z-50">
+                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                        <div className="flex justify-between h-16">
+                            <div className="flex items-center">
+                                <span className="text-2xl font-bold text-indigo-600">AtherAI</span>
+                            </div>
+                            <div className="hidden md:flex items-center space-x-8">
+                                <a href="#" className="text-gray-700 hover:text-indigo-600">Home</a>
+                                <a href="#" className="text-gray-700 hover:text-indigo-600">Features</a>
+                                <a href="#" className="text-gray-700 hover:text-indigo-600">About</a>
+                                <a href="#" className="text-gray-700 hover:text-indigo-600">Testimonials</a>
+                                {!isLoggedIn && (
+                                    <button onClick={() => setIsLoggedIn(true)} 
+                                            className="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700">
+                                        Login
+                                    </button>
+                                )}
+                            </div>
+                            <div className="md:hidden flex items-center">
+                                <button onClick={() => setIsMenuOpen(!isMenuOpen)} 
+                                        className="text-gray-700">
+                                    <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} 
+                                              d="M4 6h16M4 12h16m-7 6h7" />
+                                    </svg>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </nav>
+            );
+
+            // Hero Section
+            const Hero = () => (
+                <div className="hero-gradient min-h-screen flex items-center justify-center cursor-glow">
+                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                        <h1 className="text-4xl md:text-6xl font-bold text-white mb-8 floating-element">
+                            Transform Your Learning with AI-Powered Code Generation
+                        </h1>
+                        <p className="text-xl text-white mb-12 opacity-90">
+                            Make learning interactive and engaging with our intelligent code generation platform
+                        </p>
+                        <div className="flex justify-center space-x-4">
+                            <button className="bg-white text-indigo-600 px-8 py-3 rounded-lg font-semibold 
+                                           hover:bg-opacity-90 transition duration-300">
+                                Get Started
+                            </button>
+                            <button className="border-2 border-white text-white px-8 py-3 rounded-lg font-semibold 
+                                           hover:bg-white hover:text-indigo-600 transition duration-300">
+                                Learn More
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            );
+
+            // Search Section
+            const SearchSection = () => (
+                <div className="bg-gray-50 py-16">
+                    <div className="max-w-3xl mx-auto px-4">
+                        <div className="bg-white rounded-lg shadow-xl p-6">
+                            <input type="text"
+                                   placeholder="Describe what you want to create..."
+                                   className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:ring-2 
+                                          focus:ring-indigo-600 focus:border-transparent outline-none"
+                            />
+                            <button className="w-full mt-4 bg-indigo-600 text-white py-3 rounded-lg 
+                                           hover:bg-indigo-700 transition duration-300">
+                                Generate Code
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            );
+
+            // Features Section
+            const Features = () => (
+                <div className="py-16 bg-white">
+                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                        <h2 className="text-3xl font-bold text-center mb-12">Why Choose AtherAI?</h2>
+                        <div className="grid md:grid-cols-3 gap-8">
+                            {[
+                                {
+                                    title: "AI-Powered Code Generation",
+                                    description: "Transform your ideas into working code with our advanced AI technology"
+                                },
+                                {
+                                    title: "Interactive Learning",
+                                    description: "Learn by doing with our interactive coding environment"
+                                },
+                                {
+                                    title: "Real-time Feedback",
+                                    description: "Get instant feedback and suggestions to improve your code"
+                                }
+                            ].map((feature, index) => (
+                                <div key={index} className="p-6 bg-gray-50 rounded-lg hover:shadow-lg 
+                                                        transition duration-300 floating-element">
+                                    <h3 className="text-xl font-semibold mb-4">{feature.title}</h3>
+                                    <p className="text-gray-600">{feature.description}</p>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            );
+
+            // Testimonials Section
+            const Testimonials = () => (
+                <div className="py-16 bg-gray-50">
+                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                        <h2 className="text-3xl font-bold text-center mb-12">What Our Users Say</h2>
+                        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                            {[
+                                {
+                                    name: "Sarah Johnson",
+                                    role: "Software Developer",
+                                    text: "AtherAI has revolutionized the way I learn and write code. The AI-powered suggestions are incredibly helpful."
+                                },
+                                {
+                                    name: "Michael Chen",
+                                    role: "Student",
+                                    text: "As a beginner, AtherAI has made learning to code much less intimidating. The interactive approach is fantastic."
+                                },
+                                {
+                                    name: "Emily Rodriguez",
+                                    role: "Tech Lead",
+                                    text: "The code generation capabilities are impressive. It's saved our team countless hours of development time."
+                                }
+                            ].map((testimonial, index) => (
+                                <div key={index} className="bg-white p-6 rounded-lg shadow-md hover:shadow-xl 
+                                                        transition duration-300">
+                                    <p className="text-gray-600 mb-4">"{testimonial.text}"</p>
+                                    <div className="flex items-center">
+                                        <div className="w-12 h-12 bg-indigo-100 rounded-full flex items-center 
+                                                      justify-center text-indigo-600 font-bold">
+                                            {testimonial.name[0]}
+                                        </div>
+                                        <div className="ml-4">
+                                            <p className="font-semibold">{testimonial.name}</p>
+                                            <p className="text-gray-500 text-sm">{testimonial.role}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    </div>
+                </div>
+            );
+
+            // Footer Component
+            const Footer = () => (
+                <footer className="bg-gray-900 text-white py-12">
+                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                        <div className="grid md:grid-cols-4 gap-8">
+                            <div>
+                                <h3 className="text-xl font-bold mb-4">AtherAI</h3>
+                                <p className="text-gray-400">Making code learning interactive and engaging</p>
+                            </div>
+                            <div>
+                                <h4 className="font-semibold mb-4">Quick Links</h4>
+                                <ul className="space-y-2">
+                                    <li><a href="#" className="text-gray-400 hover:text-white">Home</a></li>
+                                    <li><a href="#" className="text-gray-400 hover:text-white">Features</a></li>
+                                    <li><a href="#" className="text-gray-400 hover:text-white">About</a></li>
+                                    <li><a href="#" className="text-gray-400 hover:text-white">Contact</a></li>
+                                </ul>
+                            </div>
+                            <div>
+                                <h4 className="font-semibold mb-4">Legal</h4>
+                                <ul className="space-y-2">
+                                    <li><a href="#" className="text-gray-400 hover:text-white">Privacy Policy</a></li>
+                                    <li><a href="#" className="text-gray-400 hover:text-white">Terms of Service</a></li>
+                                </ul>
+                            </div>
+                            <div>
+                                <h4 className="font-semibold mb-4">Connect With Us</h4>
+                                <div className="flex space-x-4">
+                                    <a href="#" className="text-gray-400 hover:text-white">
+                                        <span className="sr-only">Twitter</span>
+                                        <svg className="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
+                                            <path d="M8.29 20.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0022 5.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.072 4.072 0 012.8 9.713v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 012 18.407a11.616 11.616 0 006.29 1.84"></path>
+                                        </svg>
+                                    </a>
+                                    <a href="#" className="text-gray-400 hover:text-white">
+                                        <span className="sr-only">GitHub</span>
+                                        <svg className="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
+                                            <path fillRule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.640.7 1.029 2.688 0 3.838-2.335 4.687-4.565 4.935.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" clipRule="evenodd"></path>
+                                        </svg>
+                                    </a>
+                                    <a href="#" className="text-gray-400 hover:text-white">
+                                        <span className="sr-only">LinkedIn</span>
+                                        <svg className="h-6 w-6" fill="currentColor" viewBox="0 0 24 24">
+                                            <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
+                                        </svg>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                        <div className="mt-8 pt-8 border-t border-gray-800 text-center text-gray-400">
+                            <p>&copy; 2024 AtherAI. All rights reserved.</p>
+                        </div>
+                    </div>
+                </footer>
+            );
+
+            // Login Modal Component
+            const LoginModal = ({ isOpen, onClose }) => {
+                if (!isOpen) return null;
+
+                return (
+                    <div className="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center">
+                        <div className="bg-white rounded-lg p-8 max-w-md w-full">
+                            <div className="flex justify-between items-center mb-6">
+                                <h2 className="text-2xl font-bold">Login</h2>
+                                <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
+                                    <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                                    </svg>
+                                </button>
+                            </div>
+                            <div className="space-y-4">
+                                <button className="w-full flex items-center justify-center space-x-2 bg-white border border-gray-300 
+                                                 rounded-lg px-4 py-2 hover:bg-gray-50 transition duration-300">
+                                    <svg className="h-5 w-5" viewBox="0 0 24 24">
+                                        <path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/>
+                                        <path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/>
+                                        <path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" fill="#FBBC05"/>
+                                        <path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/>
+                                    </svg>
+                                    <span>Continue with Google</span>
+                                </button>
+                                <div className="relative">
+                                    <div className="absolute inset-0 flex items-center">
+                                        <div className="w-full border-t border-gray-300"></div>
+                                    </div>
+                                    <div className="relative flex justify-center text-sm">
+                                        <span className="px-2 bg-white text-gray-500">Or continue with</span>
+                                    </div>
+                                </div>
+                                <input type="email" 
+                                       placeholder="Email address"
+                                       className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 
+                                                focus:ring-indigo-600 focus:border-transparent" />
+                                <input type="password" 
+                                       placeholder="Password"
+                                       className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 
+                                                focus:ring-indigo-600 focus:border-transparent" />
+                                <button className="w-full bg-indigo-600 text-white py-2 rounded-lg 
+                                                 hover:bg-indigo-700 transition duration-300">
+                                    Sign in
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                );
+            };
+
+            // Mobile Menu
+            const MobileMenu = ({ isOpen, onClose }) => {
+                if (!isOpen) return null;
+
+                return (
+                    <div className="fixed inset-0 z-50 lg:hidden">
+                        <div className="fixed inset-0 bg-black bg-opacity-50" onClick={onClose}></div>
+                        <div className="relative bg-white w-64 max-w-sm h-full">
+                            <div className="flex flex-col h-full">
+                                <div className="p-4 border-b">
+                                    <div className="flex items-center justify-between">
+                                        <span className="text-2xl font-bold text-indigo-600">AtherAI</span>
+                                        <button onClick={onClose} className="text-gray-500 hover:text-gray-700">
+                                            <svg className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} 
+                                                      d="M6 18L18 6M6 6l12 12" />
+                                            </svg>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div className="flex-1 overflow-y-auto py-4">
+                                    <nav className="px-4 space-y-4">
+                                        <a href="#" className="block text-gray-700 hover:text-indigo-600">Home</a>
+                                        <a href="#" className="block text-gray-700 hover:text-indigo-600">Features</a>
+                                        <a href="#" className="block text-gray-700 hover:text-indigo-600">About</a>
+                                        <a href="#" className="block text-gray-700 hover:text-indigo-600">Testimonials</a>
+                                    </nav>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                );
+            };
+
+            // Main App Return
+            return (
+                <div className="relative min-h-screen">
+                    <Navigation />
+                    <MobileMenu isOpen={isMenuOpen} onClose={() => setIsMenuOpen(false)} />
+                    <LoginModal isOpen={!isLoggedIn} onClose={() => setIsLoggedIn(true)} />
+                    <main>
+                        <Hero />
+                        <SearchSection />
+                        <Features />
+                        <Testimonials />
+                    </main>
+                    <Footer />
+                </div>
+            );
+        };
+
+        ReactDOM.render(<App />, document.getElementById('root'));
+    </script>
+</body>
+</html>
